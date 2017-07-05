@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create route</title>
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+    <link href="styles/style.css" rel="stylesheet">
+    <script
+            src="https://code.jquery.com/jquery-2.2.4.min.js"
+            integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+            crossorigin="anonymous"></script>
+    <script src="scripts/interact.js"></script>
+    <script src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/script.js"></script>
+</head>
+<body>
+<main>
+    <div class="content col dropzone">
+        <div class="side_bar col-lg-3 dropzone"><p class="h3">Choose marker</p>
+        <div class="markers dropzone">
+            <label for="route_marker">Route Marker</label>
+            <svg id="route_marker" class="label-control draggable drag-drop" width="100" height="100">
+                <g>
+                    <rect width="100" height="100" style="fill:rgb(215,215,215);stroke-width:2;stroke:rgb(0,0,0)" ></rect>
+                </g>
+            </svg>
+            <label for="destination_marker">Route Marker</label>
+            <svg id="destination_marker" class="draggable drag-drop" width="100" height="100">
+                <g>
+                    <rect width="100" height="100" style="fill:rgb(215,215,215);stroke-width:2;stroke:rgb(0,0,0)" ></rect>
+                </g>
+            </svg>
+        </div>
+        </div>
+        <div class="main_side col-lg-9"><p class="h3">Construct your route marker</p></div>
+    </div>
+</main>
+</body>
+</html>

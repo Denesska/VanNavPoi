@@ -1,0 +1,21 @@
+.side_bar{
+    background-color: aliceblue;
+    height: 600px;
+}
+.main_side{
+    background-color: azure;
+    height: 600px;
+}
+.highlight{
+    background-color: #5bc0de;
+    border: solid 1px black;
+}
+.dropzone > .h3{
+    background-color: rgba(215, 215, 215, 0.5);
+}
+#destination_marker,
+#route_marker,
+#dummy_marker{
+    position: relative;
+    z-index: 5;
+}
