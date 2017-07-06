@@ -5,6 +5,7 @@
 .main_side{
     background-color: azure;
     height: 600px;
+    position: relative;
 }
 .highlight{
     background-color: #5bc0de;
