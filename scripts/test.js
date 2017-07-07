@@ -1,16 +1,17 @@
 /**
  * Created by d.gandzii on 7/5/2017.
  */
-var test = {};
-$(document).ready(function () {
-    let position;
+$(document).ready(function (event, ui) {
     $(".draggable").draggable({
+        start: function (event, ui) {
+          ui.helper.css({"z-index": 6});
+        },
         revert: "invalid",
         helper: "clone",
         cursor: "move",
     });
 
-    $(".main_side").droppable({
+    $(".constructor").droppable({
         accept: ".draggable",
         hoverClass: "highlight",
         tolerance: "intersect",
@@ -18,36 +19,50 @@ $(document).ready(function () {
             $(this).find(".h3").text("Drag it HERE");
             $(this).find(".h3").css("background-color", "#ddd");
         },
+        drop: function (event, ui) {
+            if (ui.draggable.is(".draggable")) {
+                let parentOffsetLeft = $(".constructor").offset().left;
+                let parentOffsetTop = $(".constructor").offset().top;
+                let left = ui.helper.position().left - parentOffsetLeft;
+                let top = ui.helper.position().top - parentOffsetTop;
+                ui.draggable.clone().appendTo($(".constructor")).addClass("dragged new");
+                let mark_clone = $(".dragged.new");
+                mark_clone.css({'left': left, 'top': top, 'position': "absolute"});
+                mark_clone.removeClass("draggable new");
+                mark_clone.removeAttr("onmousedown id");
+                draggable_el_construct(mark_clone);
+            }else {
+                let parentOffsetLeft = $(".constructor").offset().left;
+                let parentOffsetTop = $(".constructor").offset().top;
+                let left = ui.helper.position().left - parentOffsetLeft;
+                let top = ui.helper.position().top - parentOffsetTop;
+                ui.draggable.clone().appendTo($(".constructor")).addClass("dragged new");
+                let mark_clone = $(".dragged.new");
+                mark_clone.css({'left': left, 'top': top, 'position': "absolute"});
+                mark_clone.removeClass("draggable new");
+                mark_clone.removeAttr("onmousedown id");
+                draggable_el_construct(mark_clone);
+            }
+        },
         deactivate: function (event, ui) {
             $(this).find(".h3").text("Let's drag Marker");
             $(this).find(".h3").css("background-color", "rgba(215, 215, 215, 0.5)");
-        },
-        drop: function (event, ui) {
-            if (ui.draggable.is(".draggable")) {
-                position = $(".ui-draggable-dragging").offset();
-                position['position'] = "absolute";
-            test = position;
-                ui.draggable.clone().appendTo($(".constructor")).addClass("dragged new");
-                let mark_clone = $(".dragged");
-                mark_clone.css(position);
-                mark_clone.removeClass("draggable new");
-                mark_clone.removeAttr("onmousedown");
-                mark_clone.draggable();
-            }
         }
     });
 });
-function drag_marker(item) {
+$(window).resize(function() {console.log("resized")});
+function active_mark_on_top(item) {
     let id = item.getAttribute("id");
     $(".dragged").css("z-index", 5);
-    item.style.zIndex = 6;
-    console.log("you dragging : " + id);
+    item.css({"z-index": 6});
 }
-function detect_pos_relative(position) {
-
-    position = $(".ui-draggable-dragging").offset();
-    position['position'] = "absolute";
-    ui.draggable.clone().appendTo($(".constructor")).addClass("dragged");
-    let mark_clone = $(".dragged");
-    mark_clone.css(position);
+function draggable_el_construct(item) {
+    item.draggable({
+        drag: function (event, ui) {
+            $(item).css({"position": "fixed"});
+            $(".dragged").css("z-index", 5);
+            item.css("z-index", 6);
+        },
+        containment: "parent"
+    });
 }

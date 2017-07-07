@@ -5,7 +5,15 @@
 .main_side{
     background-color: azure;
     height: 600px;
+}
+.constructor{
+    background-color: #bce8f1;
+    height: 100%;
+    width: 100%;
     position: relative;
+}
+svg{
+    position: absolute;
 }
 .highlight{
     background-color: #5bc0de;
@@ -17,6 +25,5 @@
 #destination_marker,
 #route_marker,
 #dummy_marker{
-    position: relative;
-    z-index: 5;
+    position: inherit;
 }
