@@ -1,0 +1,63 @@
+.side_bar{
+    background-color: aliceblue;
+    height: 600px;
+}
+.main_side{
+    background-color: azure;
+    height: 600px;
+}
+.constructor{
+    background-color: #bce8f1;
+    height: 88%;
+    width: 100%;
+    position: relative;
+}
+svg.constructor{
+    height: 100%;
+    width: 100%;
+}
+.highlight{
+    background-color: #5bc0de;
+    border: solid 1px black;
+}
+.dropzone > .h3{
+    background-color: rgba(215, 215, 215, 0.5);
+}
+.element{
+    display: inline-block;
+    height: 5em;
+    width: 5em;
+    position: relative;
+}
+.marker{
+    border: solid 2px black;
+    display: inline-block;
+    border-radius: 2.5em;
+}
+.pointA,
+.pointB{
+    width: 1.2em;
+    height: 1.2em;
+    border-radius: 0.6em;
+    background-color: #843534;
+}
+.line > .pointA{
+    position: absolute;
+    top:0;
+    left: 0;
+}
+.line > .pointB{
+    position: absolute;
+    top: 3.8em;
+    left: 3.8em;
+}
+.svg_line{
+     width: 5em;
+     height: 5em;
+ }
+#destination_marker{
+    background-color: #bce8f1;
+}
+#route_marker{
+    background-color: #3c763d;
+}

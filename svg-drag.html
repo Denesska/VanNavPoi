@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>dummy</title>
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+    <link href="styles/jquery-ui.min.css" rel="stylesheet">
+    <link href="styles/style.css" rel="stylesheet">
+    <script src="scripts/jquery-3.2.1.min.js"></script>
+    <!--<script src="scripts/interact.js"></script>-->
+    <script src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/jquery-ui.min.js"></script>
+    <script src="scripts/svg_drag.js"></script>
+</head>
+<body>
+<div class="content col">
+    <div class="side_bar col-lg-3 col-sm-5"><p class="h3">Choose marker</p>
+        <div class="markers ">
+
+            <svg width="100" height="100" class="draggable">
+                <g id="route_marker" class="point">
+                    <circle r="10" cx="50" cy="50" fill="#fff" stroke-width="3" stroke="red" opacity="0.5"></circle>
+                </g>
+            </svg>
+            <svg width="100" height="100" class="draggable">
+                <g id="destination_marker" class="point">
+                    <circle r="10" cx="50" cy="50" fill="#fff" stroke-width="3" stroke="red" opacity="0.5"></circle>
+                </g>
+            </svg>
+            <svg width="100" height="100" class="draggable">
+                <g id="line">
+                    <circle class="pointA" cx="11" cy="11" r="10"
+                            style="fill:rgba(215,215,215, 0.2);stroke-width:2;" stroke="red"></circle>
+                    <line x1="11" x2="89" y1="11" y2="89"
+                          style="fill:rgb(215,215,215);stroke-width:2;stroke:rgb(0,0,0)"></line>
+                    <circle class="pointB" cx="89" cy="89" r="10"
+                            style="fill:rgba(215,215,215, 0.2);stroke-width:2;stroke:rgb(0,0,0)"></circle>
+                </g>
+            </svg>
+        </div>
+    </div>
+    <div class="main_side col-lg-9 col-sm-7 ">
+        <p class="h3">Construct your route marker</p>
+        <div class="constructor">
+            <svg id="svg_constructor" class="constructor">
+
+            </svg>
+        </div>
+    </div>
+</div>
+</body>
+</html>

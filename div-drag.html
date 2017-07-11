@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create route</title>
+    <link href="styles/bootstrap.min.css" rel="stylesheet">
+    <link href="styles/jquery-ui.min.css" rel="stylesheet">
+    <link href="styles/div-drag.css" rel="stylesheet">
+    <script src="scripts/jquery-3.2.1.min.js"></script>
+    <!--<script src="scripts/interact.js"></script>-->
+    <script src="scripts/bootstrap.min.js"></script>
+    <script src="scripts/jquery-ui.min.js"></script>
+    <script src="scripts/div_drag.js"></script>
+</head>
+<body>
+<main>
+    <div class="content col">
+        <div class="side_bar col-lg-3 col-sm-5"><p class="h3">Choose marker</p>
+            <div class="markers ">
+                <div id="destination_marker" class="draggable element marker"></div>
+                <div id="route_marker" class="draggable element marker"></div>
+                <div id="line" class="draggable element line">
+                    <svg class="svg_line"><line x1="0" y1="0" x2="70" y2="70" stroke="red" stroke-width="3"></line></svg>
+                    <div class="pointA"></div>
+                    <div class="pointB"></div></div>
+            </div>
+        </div>
+        <div class="main_side col-lg-9 col-sm-7 ">
+            <p class="h3">Construct your route marker</p>
+            <div class="constructor">
+                <svg id="svg_constructor" class="constructor">
+
+                </svg>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
+
+<!-- <svg onmousedown="drag_marker(this)" id="dummy_marker" class="draggable" width="100" height="100">
+     <g>
+         <rect width="100" height="100" style="fill:rgb(215,215,215);stroke-width:2;stroke:rgb(0,0,0)" ></rect>
+     </g>
+ </svg>-->
