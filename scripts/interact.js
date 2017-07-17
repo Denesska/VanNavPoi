@@ -1280,7 +1280,7 @@
 
             scale: 1,           // gesture.distance / gesture.startDistance
 
-            startAngle: 0,      // angle of line joining two touches
+            startAngle: 0,      // angle of lines joining two touches
             prevAngle : 0       // angle of the previous gesture event
         };
 

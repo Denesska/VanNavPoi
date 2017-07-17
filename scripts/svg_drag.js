@@ -28,16 +28,16 @@ $(document).ready(function (event, ui) {
                 $("#svg_constructor").append(ui.draggable.clone().children().addClass("new"));
                 let new_obj = $(".new");
                 new_obj.attr({"id": new_obj.attr("id") + "_" + i++});
-                if (new_obj.attr("id").substring(0, 4) === "line") {
+                if (new_obj.attr("id").substring(0, 4) === "lines") {
                     new_obj.find(".pointA").attr({"cx": left + 11, "cy": top + 11, "onmousedown": "dragObject(this)"});
                     new_obj.find(".pointB").attr({"cx": left + 89, "cy": top + 89, "onmousedown": "dragObject(this)"});
-                    new_obj.find("line").attr({"x1": left + 11, "y1": top + 11, "x2": left + 89, "y2": top + 89});
+                    new_obj.find("lines").attr({"x1": left + 11, "y1": top + 11, "x2": left + 89, "y2": top + 89});
 
                 } else {
                     new_obj.children().attr({"onmousedown": "dragObject(this)", "cx": left + 50, "cy": top + 50});
                 }
                 new_obj.removeClass("new");
-                if(new_obj.find("line").length === 0){
+                if(new_obj.find("lines").length === 0){
                     new_obj.mouseenter(function () {
                         blabla = this;
                     });

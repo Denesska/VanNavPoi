@@ -20,16 +20,21 @@
                 <div id="destination_marker" class="draggable element marker"></div>
                 <div id="route_marker" class="draggable element marker"></div>
                 <div id="line" class="draggable element line">
-                    <svg class="svg_line"><line x1="0" y1="0" x2="70" y2="70" stroke="red" stroke-width="3"></line></svg>
+                    <svg class="svg_line">
+                        <line x1="0" y1="0" x2="70" y2="70" stroke="red" stroke-width="3"></line>
+                    </svg>
                     <div class="pointA"></div>
-                    <div class="pointB"></div></div>
+                    <div class="pointB"></div>
+                </div>
             </div>
         </div>
         <div class="main_side col-lg-9 col-sm-7 ">
             <p class="h3">Construct your route marker</p>
-            <div class="constructor">
+            <div id="div_constructor" class="constructor">
+                <div class="x2 hidden"></div>
                 <svg id="svg_constructor" class="constructor">
-
+                    <line id="replace_line" class="route_line" stroke-width="5" x1="0" x2="100" y1="0"
+                          y2="100"></line>
                 </svg>
             </div>
         </div>
