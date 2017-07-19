@@ -33,14 +33,18 @@ class Lines {
     }
 }
 class Points {
-    constructor(id, left, top, type, line_id, accepted, classes) {
-        this.id = id;
+    constructor(nr, left, top, type, accepted, classes) {
+        this.nr = nr;
+        this.id = "pointed_" + this.nr;
         this.x = left;
         this.y = top;
         this.type = type;
-        this.line = line_id;
+        this.line = false;
         this.acceptance = accepted;
         this.classes = classes;
+        this.number = function () {
+            return parseInt(this.id.replace(/[^0-9]/g, ''));
+        }
     }
 }
 class Temp {
@@ -53,38 +57,64 @@ class Temp {
         this.del = false;
     }
 }
+$(document).click(function (e) {
+    let target = $(e.target);
+    if (!target.is(".marker p")){
+        $("#markers_info").addClass("hidden")
+    }else {
+        $("#markers_info").removeClass("hidden");
+        let div = target.closest("div");
+        console.log(div.attr("id"));
+    }
+});
 $(document).ready(function (event, ui) {
+    let div_constructor = $("#div_constructor");
+    let svg_constructor = $("#svg_constructor");
     if ("points" in localStorage) {
         let restore_div, filtered;
         points = JSON.parse(localStorage.points);
         for (j = 0; j < points.length; j++) {
-            restore_div = $("#destination_marker").clone().appendTo($("#div_constructor"))
+            restore_div = $("#destination_marker").clone().appendTo(div_constructor)
                 .css({"position": "absolute", "left": points[j].x, "top": points[j].y})
                 .attr({"id": points[j].id, "class": points[j].classes});
+            restore_div.children().html(points[j].nr);
             make_draggable(restore_div);
             make_droppable(restore_div);
         }
         temporary = JSON.parse(localStorage.temp);
+        temp_nr = temporary.length;
         filtered = temporary.filter(function (filtered) {
             return filtered.del === false;
         });
         for (j = 0; j < filtered.length; j++) {
-             restore_div = $("#line").clone().appendTo($("#div_constructor"))
+            restore_div = $("#line").clone().appendTo(div_constructor)
                 .css({"position": "absolute", "left": filtered[j].x, "top": filtered[j].y})
                 .attr({"id": filtered[j].id, "class": filtered[j].classes});
             make_draggable(restore_div);
         }
         lines = JSON.parse(localStorage.lines);
+        line_nr = lines.length;
         filtered = lines.filter(function (filtered) {
             return filtered.del === false;
         });
         for (j = 0; j < filtered.length; j++) {
-            restore_div = $(".pointA").first().clone().appendTo($("#div_constructor"))
-                .css({"position": "absolute", "left": filtered[j].x2-8, "top": filtered[j].y2-8})
-                .attr({"id": filtered[j].B, "class":"x2 dragged"});
-              $("#replace_line").clone().appendTo($("#svg_constructor"))
-                .attr({"id": filtered[j].id, "x1": filtered[j].x1, "x2": filtered[j].x2, "y1": filtered[j].y1, "y2": filtered[j].y2, stroke:"black", });
-            make_draggable(restore_div);
+            if (lines[j].B.substr(0, 4) === "temp") {
+                restore_div = $(".pointA").first().clone().appendTo(div_constructor)
+                    .css({"position": "absolute", "left": filtered[j].x2 - 8, "top": filtered[j].y2 - 8})
+                    .attr({"id": filtered[j].B, "class": "x2 dragged " + lines[j].typeA});
+                make_draggable(restore_div);
+            }
+            $("#replace_line").clone().appendTo(svg_constructor)
+                .attr({
+                    "id": filtered[j].id,
+                    "x1": filtered[j].x1,
+                    "x2": filtered[j].x2,
+                    "y1": filtered[j].y1,
+                    "y2": filtered[j].y2,
+                    stroke: "black",
+                    "ondblclick": "remove_line(this)"
+                });
+
         }
     }
     $(".draggable").draggable({
@@ -95,35 +125,37 @@ $(document).ready(function (event, ui) {
         helper: "clone",
         cursor: "move",
     });
-    $("#div_constructor").droppable({
+    div_constructor.droppable({
         accept: ".draggable, .dragged, .point, .any",
         hoverClass: "highlight",
         tolerance: "intersect",
         containment: "parent",
         drop: function (event, ui) {
-            let left = ui.helper.position().left - $("#svg_constructor").offset().left;
-            let top = ui.helper.position().top - $("#svg_constructor").offset().top;
+            let left = ui.helper.position().left - svg_constructor.offset().left;
+            let top = ui.helper.position().top - svg_constructor.offset().top;
             if (ui.draggable.is(".draggable")) {
                 if (ui.draggable.attr("id") === "destination_marker") {
-                    ui.draggable.clone().appendTo($("#div_constructor")).addClass("dragged destination new");
-                    points[pointed_nr] = new Points("pointed_" + pointed_nr, left, top, "destination", "none", ".point, .any", "element marker dragged destination");
-                } else  if (ui.draggable.attr("id") === "route_marker"){
-                    ui.draggable.clone().appendTo($("#div_constructor")).addClass("dragged new");
-                    points[pointed_nr] = new Points("pointed_" + pointed_nr, left, top, "route", "none", ".point, .any, .only_route", "element marker dragged");
-                }else if (ui.draggable.attr("id") === "line"){
-                    ui.draggable.clone().appendTo($("#div_constructor")).addClass("dragged new");
+                    ui.draggable.clone().appendTo(div_constructor).addClass("dragged destination new");
+                    points[pointed_nr] = new Points(pointed_nr, left, top, "destination", ".point, .route", "element marker dragged destination");
+                    $(".new p").html(pointed_nr);
+                } else if (ui.draggable.attr("id") === "route_marker") {
+                    ui.draggable.clone().appendTo(div_constructor).addClass("dragged route new");
+                    points[pointed_nr] = new Points(pointed_nr, left, top, "route", ".point, .route, .destination", "element marker dragged route");
+                    $(".new p").html(pointed_nr);
+                } else if (ui.draggable.attr("id") === "line") {
+                    ui.draggable.clone().appendTo(div_constructor).addClass("dragged new");
                     temporary[temp_nr] = new Temp("temp_" + temp_nr, left, top, "not_pointed", "point element line dragged")
-                }else {
-                    ui.draggable.clone().appendTo($("#div_constructor")).addClass("dragged new");
+                } else {
+                    ui.draggable.clone().appendTo(div_constructor).addClass("dragged new");
                 }
                 let mark_clone = $(".dragged.new");
                 mark_clone.css({'left': left, 'top': top, 'position': "absolute"})
                     .removeClass("draggable new")
                     .removeAttr("onmousedown id");
                 if (mark_clone.is(".line")) {
-                    mark_clone.addClass("point").attr({"id":"temp_" + temp_nr++});
+                    mark_clone.addClass("point").attr({"id": "temp_" + temp_nr++});
                     make_draggable(mark_clone);
-                   } else if (mark_clone.is(".marker")) {
+                } else if (mark_clone.is(".marker")) {
                     make_draggable(mark_clone);
                     make_droppable(mark_clone);
                 }
@@ -133,17 +165,7 @@ $(document).ready(function (event, ui) {
     });
 });
 function make_draggable(item, id) {
-    if ($(item).hasClass("marker")) {
-        $(item).addClass("any");
-            //  revertable = "invalid";
-        } else if ($(item).hasClass("point")) {
-        $(item).addClass("any");
-            //  revertable = "invalid";
-        } else {
-        if (lines.length > 0 && lines[line_nr].typeB !== "any") {
-            $(item).addClass("only_route");
-            // revertable = "invalid";
-        }
+    if (item.hasClass("temporary")) {
         $(item).removeClass("temporary").attr({"id": "tempB_" + line_nr++});
     }
     let top, left, add, str, strA, strB;
@@ -196,14 +218,28 @@ function make_draggable(item, id) {
             }
         },
         stop: function (event, ui) {
+            let id = $(this).attr("id");
+            let x = extNum(id);
             if ($(this).hasClass("marker")) {
-                points[extNum($(this).attr("id"))].x = $(this).position().left;
-                points[extNum($(this).attr("id"))].y = $(this).position().top;
+                points[x].x = $(this).position().left;
+                points[x].y = $(this).position().top;
+                for (j = 0; j < lines.length; j++) {
+                    if (lines[j].A === id) {
+                        lines[j].x1 = $(this).position().left + 35;
+                        lines[j].y1 = $(this).position().top + 35;
+                    } else if (lines[j].B === id) {
+                        lines[j].x2 = $(this).position().left + 35;
+                        lines[j].y2 = $(this).position().top + 35;
+                    }
+                }
             } else if ($(this).hasClass("x2")) {
-
+                if (lines[x].B.substr(0, 4) === "temp") {
+                    lines[x].x2 = $(this).position().left + 8;
+                    lines[x].y2 = $(this).position().top + 8;
+                }
             } else {
-                temporary[extNum($(this).attr("id"))].x = $(this).position().left;
-                temporary[extNum($(this).attr("id"))].y = $(this).position().top;
+                temporary[x].x = $(this).position().left;
+                temporary[x].y = $(this).position().top;
             }
             updateLocalStorage()
         }
@@ -222,12 +258,12 @@ function make_droppable(item) {
             if (ui.helper.hasClass("x2")) {
                 let x = extNum($(ui.helper).attr("id"));
                 lines[x].B = $(this).attr("id");
-                lines[x].x2 = left;
-                lines[x].y2 = top;
+                lines[x].x2 = left + 35;
+                lines[x].y2 = top + 35;
 
             } else {
                 if (item.hasClass("destination")) {
-                    lines[line_nr] = new Lines(left, top, $(item).attr("id"), "tempB_" + line_nr, "destination", "only_route", false);
+                    lines[line_nr] = new Lines(left, top, $(item).attr("id"), "tempB_" + line_nr, "destination", "route", false);
                     temporary[extNum(ui.draggable.attr("id"))].del = true;
                     updateLocalStorage()
                 } else {
@@ -235,15 +271,15 @@ function make_droppable(item) {
                     temporary[extNum(ui.draggable.attr("id"))].del = true;
                     updateLocalStorage()
                 }
-                $("#replace_line").clone().appendTo("#svg_constructor").attr(lines[line_nr].initial());
                 $(".x2.hidden").clone().appendTo("#div_constructor").css({
                     "top": top + 90,
                     "left": left + 90,
                     "position": "absolute"
-                }).removeClass("hidden")
-                    .addClass("temporary dragged");
+                }).removeClass("hidden").addClass("temporary dragged " + lines[line_nr].typeA);
+                $("#replace_line").clone().appendTo("#svg_constructor").attr(lines[line_nr].initial());
                 make_draggable($(".temporary"), id);
             }
+            points[extNum($(item).attr("id"))].line = true;
             ui.draggable.remove();
         }
     });
@@ -268,4 +304,11 @@ function updateLocalStorage() {
     localStorage.setItem("lines", JSON.stringify(lines));
     console.log("updated local Storage")
     //   localStorage.setItem("lines", JSON.stringify(line));
+}
+function show_marker_details(item) {
+    let html_block = ""
+    $("#p_template").clone().appendTo("#markers_info").html(pointed_nr + " : " + points[pointed_nr].type + " -> <input type='text' id='" + points[pointed_nr].type + "_" + pointed_nr + "' value='marker&quot;s info'/>")
+}
+function remove_active_class() {
+$(".active").removeClass()
 }

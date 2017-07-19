@@ -28,6 +28,7 @@ svg.constructor{
     height: 5em;
     width: 5em;
     position: relative;
+    cursor: move;
 }
 .marker{
     border: solid 2px black;
@@ -35,8 +36,21 @@ svg.constructor{
     border-radius: 2.5em;
     background-color: rgba(13,133,22,1);
 }
+.marker > p{
+    color: white;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 4em;
+    line-height: 1.25em;
+}
 .marker.active{
     background-color: rgba(255, 231, 92, 0.67);
+}
+#destination_marker, .destination{
+    background-color: #d43f3a;
+}
+#route_marker, .route{
+    background-color: #3c22ad;
 }
 .pointA,
 .pointB,
@@ -46,6 +60,7 @@ svg.constructor{
     border-radius: 0.6em;
     background-color: #222;
     z-index: 6;
+    cursor: pointer;
 }
 .line > .pointA{
     position: absolute;
@@ -61,9 +76,6 @@ svg.constructor{
      width: 5em;
      height: 5em;
  }
-#destination_marker, .destination{
-    background-color: #d43f3a;
-}
-#route_marker{
-    background-color: #3c763d;
+form > input:last-of-type{
+    margin-bottom: 1em;
 }

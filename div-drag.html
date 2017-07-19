@@ -17,8 +17,8 @@
     <div class="content col">
         <div class="side_bar col-lg-3 col-sm-5"><p class="h3">Choose marker</p>
             <div class="markers ">
-                <div id="destination_marker" class="draggable element marker"></div>
-                <div id="route_marker" class="draggable element marker"></div>
+                <div id="destination_marker" class="draggable element marker"><p></p></div>
+                <div id="route_marker" class="draggable element marker"><p></p></div>
                 <div id="line" class="draggable element line">
                     <svg class="svg_line">
                         <line x1="0" y1="0" x2="70" y2="70" stroke="red" stroke-width="3"></line>
@@ -26,6 +26,23 @@
                     <div class="pointA"></div>
                     <div class="pointB"></div>
                 </div>
+            </div>
+            <hr>
+            <div id="markers_info" class="">
+                <h3 class="h3">Destination 3:</h3>
+                <form id="submit_marker_details" class="">
+                    <label for="marker_number">Number:</label> <input id="marker_number" class="form-control control-label" type="number" value="010101">
+                    <label for="marker_title">Title:</label> <input id="marker_title" class="form-control" type="number" value="010101">
+                    <label for="marker_description">Descriptions:</label> <input id="marker_description" class="form-control" type="number" value="010101">
+                    <button class="form-control btn-group-justified btn-success" type="submit">Save it!</button>
+                    <label for="marker_connections">Connections:</label>
+                    <ul id="marker_connections" class="list-group">
+                    <li class="list-group-item"><a href="#">connection 1</a></li>
+                    <li class="list-group-item"><a href="#">connection 2</a></li>
+                    <li class="list-group-item"><a href="#">connection 3</a></li>
+                    <li class="list-group-item"><a href="#">connection 4</a></li>
+                </ul>
+                </form>
             </div>
         </div>
         <div class="main_side col-lg-9 col-sm-7 ">
