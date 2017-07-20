@@ -28,19 +28,23 @@
                 </div>
             </div>
             <hr>
-            <div id="markers_info" class="">
-                <h3 class="h3">Destination 3:</h3>
+            <div id="markers_info" class="hidden">
+                <h3 id="marker_name" class="h3">Marker type</h3>
                 <form id="submit_marker_details" class="">
                     <label for="marker_number">Number:</label> <input id="marker_number" class="form-control control-label" type="number" value="010101">
-                    <label for="marker_title">Title:</label> <input id="marker_title" class="form-control" type="number" value="010101">
-                    <label for="marker_description">Descriptions:</label> <input id="marker_description" class="form-control" type="number" value="010101">
-                    <button class="form-control btn-group-justified btn-success" type="submit">Save it!</button>
-                    <label for="marker_connections">Connections:</label>
+                    <label for="marker_title">Title:</label> <input id="marker_title" class="form-control" type="text" placeholder="Mark title">
+                    <label for="marker_description">Descriptions:</label> <textarea id="marker_description" class="form-control" placeholder="Put down description about this mark"></textarea>
+                    <div class="btn-group btn-group-justified top-margin" role="group">
+                        <div class="btn-group" role="group">
+                            <button id="save_it" class="btn btn-success " type="submit">Save it!</button>
+                        </div>
+                        <div class="btn-group" role="group">
+                            <button id="remove_it" class="btn btn-danger" type="button" name="delete">Remove it!</button></div>
+                        </div>
+                    <hr>
+                    <label for="marker_connections">Connections with:</label>
                     <ul id="marker_connections" class="list-group">
-                    <li class="list-group-item"><a href="#">connection 1</a></li>
-                    <li class="list-group-item"><a href="#">connection 2</a></li>
-                    <li class="list-group-item"><a href="#">connection 3</a></li>
-                    <li class="list-group-item"><a href="#">connection 4</a></li>
+                    <li id="marker_connection" class="list-group-item hidden"></li>
                 </ul>
                 </form>
             </div>

@@ -4,7 +4,7 @@ let temp_nr = 0;
 let lines = [];
 let points = [];
 let temporary = [];
-let f = null;
+let active_id = "nan";
 class Lines {
     constructor(left, top, A, B, typeA, typeB, del) {
         this.x1 = left + 35;
@@ -42,9 +42,10 @@ class Points {
         this.line = false;
         this.acceptance = accepted;
         this.classes = classes;
-        this.number = function () {
-            return parseInt(this.id.replace(/[^0-9]/g, ''));
-        }
+        this.code = random_code();
+        this.title = type + " " + nr;
+        this.description = "Some description of this mark.";
+        this.del = false;
     }
 }
 class Temp {
@@ -57,16 +58,7 @@ class Temp {
         this.del = false;
     }
 }
-$(document).click(function (e) {
-    let target = $(e.target);
-    if (!target.is(".marker p")){
-        $("#markers_info").addClass("hidden")
-    }else {
-        $("#markers_info").removeClass("hidden");
-        let div = target.closest("div");
-        console.log(div.attr("id"));
-    }
-});
+$(document).mousedown(ShowMarkerDetails);
 $(document).ready(function (event, ui) {
     let div_constructor = $("#div_constructor");
     let svg_constructor = $("#svg_constructor");
@@ -74,12 +66,14 @@ $(document).ready(function (event, ui) {
         let restore_div, filtered;
         points = JSON.parse(localStorage.points);
         for (j = 0; j < points.length; j++) {
-            restore_div = $("#destination_marker").clone().appendTo(div_constructor)
-                .css({"position": "absolute", "left": points[j].x, "top": points[j].y})
-                .attr({"id": points[j].id, "class": points[j].classes});
-            restore_div.children().html(points[j].nr);
-            make_draggable(restore_div);
-            make_droppable(restore_div);
+            if (points[j].del === false){
+                restore_div = $("#destination_marker").clone().appendTo(div_constructor)
+                    .css({"position": "absolute", "left": points[j].x, "top": points[j].y})
+                    .attr({"id": points[j].id, "class": points[j].classes});
+                restore_div.children().html(points[j].nr);
+                make_draggable(restore_div);
+                make_droppable(restore_div);
+            }
         }
         temporary = JSON.parse(localStorage.temp);
         temp_nr = temporary.length;
@@ -98,7 +92,7 @@ $(document).ready(function (event, ui) {
             return filtered.del === false;
         });
         for (j = 0; j < filtered.length; j++) {
-            if (lines[j].B.substr(0, 4) === "temp") {
+            if (lines[j].del === false && lines[j].B.substr(0, 4) === "temp") {
                 restore_div = $(".pointA").first().clone().appendTo(div_constructor)
                     .css({"position": "absolute", "left": filtered[j].x2 - 8, "top": filtered[j].y2 - 8})
                     .attr({"id": filtered[j].B, "class": "x2 dragged " + lines[j].typeA});
@@ -116,6 +110,7 @@ $(document).ready(function (event, ui) {
                 });
 
         }
+        active_id = extNum(localStorage.active_id);
     }
     $(".draggable").draggable({
         start: function (event, ui) {
@@ -163,6 +158,9 @@ $(document).ready(function (event, ui) {
             }
         }
     });
+    if (!isNaN(active_id)){
+        replaceMarkerDetails(active_id);
+    }
 });
 function make_draggable(item, id) {
     if (item.hasClass("temporary")) {
@@ -289,6 +287,7 @@ function remove_line(item) {
     lines[x].del = true;
     item.remove();
     $("#tempB_" + x).remove();
+    updateLocalStorage();
 }
 function extNum(str) {
     return parseInt(str.replace(/[^0-9]/g, ''));
@@ -310,5 +309,79 @@ function show_marker_details(item) {
     $("#p_template").clone().appendTo("#markers_info").html(pointed_nr + " : " + points[pointed_nr].type + " -> <input type='text' id='" + points[pointed_nr].type + "_" + pointed_nr + "' value='marker&quot;s info'/>")
 }
 function remove_active_class() {
-$(".active").removeClass()
+    $(".active").removeClass()
+}
+function random_code() {
+    return Math.floor((Math.random() * 10000) + 99999);
+}
+function ShowMarkerDetails(e) {
+    let target = $(e.target);
+    if (target.is(".marker p")) {
+        let div = target.closest("div");
+        let x = extNum(div.attr("id"));
+        replaceMarkerDetails(x);
+    } else if (target.is("#svg_constructor")) {
+        $("#markers_info").addClass("hidden");
+        $(".marker").removeClass("active");
+        updateLocalStorageActiveId("nan");
+
+    }
+}
+function replaceMarkerDetails(x) {
+    $(".marker").removeClass("active");
+    $("#pointed_" + x).addClass("active");
+    $(".connections_link").remove();
+    $("#markers_info").removeClass("hidden");
+    $("#marker_name").html(points[x].title);
+    $("#marker_number").val(points[x].code);
+    $("#marker_title").val(points[x].title);
+    $("#marker_description").val(points[x].description);
+    $("#save_it").attr({"onclick": "saveMarkerDetails(" + x + ")"});
+    $("#remove_it").attr({"onclick": "removeMarker(" + x + ")"});
+    updateLocalStorageActiveId(x);
+    let con;
+    let id = points[x].id;
+    for (j = 0; j < lines.length; j++) {
+        if (lines[j].del === false){
+            if (lines[j].A === id) {
+                con = $("#marker_connection").clone().appendTo("#marker_connections").attr({"id": "new_connections"});
+                $("<a href='#'></a>").text(lines[j].B).appendTo('#new_connections').attr({"onclick": "replaceMarkerDetails(" + extNum(lines[j].B) + ")"});
+                con.removeAttr("id").removeClass("hidden").addClass("connections_link");
+            } else if (lines[j].B === id) {
+                con = $("#marker_connection").clone().appendTo("#marker_connections").attr({"id": "new_connections"});
+                $("<a href='#'></a>").text(lines[j].A).appendTo('#new_connections').attr({"onclick": "replaceMarkerDetails(" + extNum(lines[j].A) + ")"});
+                con.removeAttr("id").removeClass("hidden").addClass("connections_link");
+            }
+        }
+    }
+}
+function saveMarkerDetails(x) {
+   points[x].code = $("#marker_number").val();
+   points[x].title = $("#marker_title").val();
+   points[x].description = $("#marker_description").val();
+   console.log("details saved for item pointed_"+x);
+   updateLocalStorage();
+   return false;
+}
+function removeMarker(x) {
+    let r = confirm("Are you sure want to delete this POINT ?");
+    if (r === true){
+        let id_str = [];
+        for (j = 0; j < lines.length; j++) {
+            if (lines[j].A === "pointed_" + x || lines[j].B === "pointed_" + x) {
+                lines[j].del = true;
+                id_str.push("#" + lines[j].id);
+            }
+        }
+        $(id_str.join(",")).remove();
+        $("#pointed_" + x).remove();
+        points[x].del = true;
+        console.log("removed point with id pointed_" + x);
+    }
+    updateLocalStorage();
+    return false;
+}
+function updateLocalStorageActiveId(x) {
+    active_id = x;
+    localStorage.setItem("active_id", active_id);
 }

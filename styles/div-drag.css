@@ -1,10 +1,10 @@
 .side_bar{
     background-color: aliceblue;
-    height: 600px;
+    height: 900px;
 }
 .main_side{
     background-color: azure;
-    height: 600px;
+    height: 900px;
 }
 .constructor{
     background-color: #bce8f1;
@@ -76,6 +76,9 @@ svg.constructor{
      width: 5em;
      height: 5em;
  }
-form > input:last-of-type{
-    margin-bottom: 1em;
+.top-margin{
+    margin-top: 1em;
+}
+#marker_name {
+    text-transform:capitalize;
 }
