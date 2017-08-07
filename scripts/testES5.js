@@ -1,75 +1,70 @@
-let line_nr = 0;
-let pointed_nr = 0;
-let temp_nr = 0;
-let lines = [];
-let points = [];
-let temporary = [];
-let active_id = "nan";
-let points_data_list;
+var line_nr = 0;
+var pointed_nr = 0;
+var temp_nr = 0;
+var lines = [];
+var points = [];
+var temporary = [];
+var active_id = "nan";
+var points_data_list;
 
-class Lines {
-    constructor(left, top, A, B, typeA, typeB, del) {
-        this.x1 = left + 35;
-        this.x2 = left + 98;
-        this.y1 = top + 35;
-        this.y2 = top + 98;
-        this.A = A;
-        this.typeA = typeA;
-        this.typeB = typeB;
-        this.B = B;
-        this.id = "lines_" + lines.length;
-        this.del = del;
-    }
+console.log(sessionStorage);
 
-    initial() {
-        return {
-            "x1": this.x1,
-            "y1": this.y1,
-            "x2": this.x2,
-            "y2": this.y2,
-            "stroke": "black",
-            "id": this.id,
-            "class": this.A,
-            "ondblclick": "remove_line(this)"
-        };
-    }
+function Lines(left, top, A, B, typeA, typeB, del) {
+    this.x1 = left + 35;
+    this.x2 = left + 98;
+    this.y1 = top + 35;
+    this.y2 = top + 98;
+    this.A = A;
+    this.typeA = typeA;
+    this.typeB = typeB;
+    this.B = B;
+    this.id = "lines_" + lines.length;
+    this.del = del;
+    this.initial = get_initial();
 }
 
-class Points {
-    constructor(nr, left, top, type, accepted, classes) {
-        this.nr = nr;
-        this.id = "pointed_" + this.nr;
-        this.x = left;
-        this.y = top;
-        this.type = type;
-        this.line = false;
-        this.acceptance = accepted;
-        this.classes = classes;
-        this.code = random_code();
-        this.title = type + " " + nr;
-        this.description = "Some description of this mark.";
-        this.del = false;
-    }
+function get_initial() {
+    return {
+        "x1": this.x1,
+        "y1": this.y1,
+        "x2": this.x2,
+        "y2": this.y2,
+        "stroke": "black",
+        "id": this.id,
+        "class": this.A,
+        "ondblclick": "remove_line(this)"
+    };
 }
-class Temp {
-    constructor(id, left, top, type, classes) {
-        this.id = id;
-        this.x = left;
-        this.y = top;
-        this.type = type;
-        this.classes = classes;
-        this.del = false;
-    }
+function Points(nr, left, top, type, accepted, classes) {
+    this.nr = nr;
+    this.id = "pointed_" + this.nr;
+    this.x = left;
+    this.y = top;
+    this.type = type;
+    this.line = false;
+    this.acceptance = accepted;
+    this.classes = classes;
+    this.code = random_code();
+    this.title = type + " " + nr;
+    this.description = "Some description of this mark.";
+    this.del = false;
+}
+function Temp(id, left, top, type, classes) {
+    this.id = id;
+    this.x = left;
+    this.y = top;
+    this.type = type;
+    this.classes = classes;
+    this.del = false;
 }
 
 $(document).mousedown(ShowMarkerDetails);
 $(document).ready(function (event, ui) {
-    loadPointsData();
-    let div_constructor = $("#div_constructor");
-    let svg_constructor = $("#svg_constructor");
-    if ("points" in localStorage) {
-        let restore_div, filtered;
-        points = JSON.parse(localStorage.points);
+    var div_constructor = $("#div_constructor");
+    var svg_constructor = $("#svg_constructor");
+    if (sessionStorage !== null && sessionStorage.getItem("points") !== null) {
+        var restore_div, filtered;
+        points = JSON.parse(sessionStorage.points);
         for (j = 0; j < points.length; j++) {
             if (points[j].del === false) {
                 restore_div = $("#destination_marker").clone().appendTo(div_constructor)
@@ -80,7 +75,7 @@ $(document).ready(function (event, ui) {
                 make_droppable(restore_div);
             }
         }
-        temporary = JSON.parse(localStorage.temp);
+        temporary = JSON.parse(sessionStorage.temp);
         temp_nr = temporary.length;
         filtered = temporary.filter(function (filtered) {
             return filtered.del === false;
@@ -91,7 +86,7 @@ $(document).ready(function (event, ui) {
                 .attr({"id": filtered[j].id, "class": filtered[j].classes});
             make_draggable(restore_div);
         }
-        lines = JSON.parse(localStorage.lines);
+        lines = JSON.parse(sessionStorage.lines);
         line_nr = lines.length;
         filtered = lines.filter(function (filtered) {
             return filtered.del === false;
@@ -115,22 +110,23 @@ $(document).ready(function (event, ui) {
                 });
 
         }
-        if (!!localStorage.active_id) {
-            active_id = extNum(localStorage.active_id);
+        if (!!sessionStorage.active_id) {
+            active_id = extNum(sessionStorage.active_id);
         } else {
             active_id = "nan"
         }
     }
-    if (!!localStorage.bg_img) {
+    if (sessionStorage !== null && !!sessionStorage.bg_img) {
         $("#div_constructor").css({
-            "background-image": "url(" + localStorage.bg_img + ")",
-            "width": localStorage.w_bg_img,
-            "height": localStorage.h_bg_img
+            "background-image": "url(" + sessionStorage.bg_img + ")",
+            "width": sessionStorage.w_bg_img,
+            "height": sessionStorage.h_bg_img
         });
     }
     $(".draggable").draggable({
         start: function (event, ui) {
             ui.helper.css({"z-index": 6});
+            console.log("start dragging");
         },
         revert: "invalid",
         helper: "clone",
@@ -142,8 +138,8 @@ $(document).ready(function (event, ui) {
         tolerance: "intersect",
         containment: "parent",
         drop: function (event, ui) {
-            let left = ui.helper.position().left - svg_constructor.offset().left;
-            let top = ui.helper.position().top - svg_constructor.offset().top;
+            var left = ui.helper.position().left - svg_constructor.offset().left;
+            var top = ui.helper.position().top - svg_constructor.offset().top;
             if (ui.draggable.is(".draggable")) {
                 if (ui.draggable.attr("id") === "destination_marker") {
                     ui.draggable.clone().appendTo(div_constructor).addClass("dragged destination new");
@@ -159,7 +155,7 @@ $(document).ready(function (event, ui) {
                 } else {
                     ui.draggable.clone().appendTo(div_constructor).addClass("dragged new");
                 }
-                let mark_clone = $(".dragged.new");
+                var mark_clone = $(".dragged.new");
                 mark_clone.css({'left': left, 'top': top, 'position': "absolute"})
                     .removeClass("draggable new")
                     .removeAttr("onmousedown id");
@@ -170,7 +166,7 @@ $(document).ready(function (event, ui) {
                     make_draggable(mark_clone);
                     make_droppable(mark_clone);
                 }
-                updateLocalStorage();
+                updatesessionStorage();
             }
         }
     });
@@ -183,32 +179,32 @@ function make_draggable(item, id) {
     if (item.hasClass("temporary")) {
         $(item).removeClass("temporary").attr({"id": "tempB_" + line_nr++});
     }
-    let top, left, add, str, strA, strB;
+    var top, left, add, str, strA, strB;
     item.draggable({
         revert: "invalid",
         containment: "parent",
         start: function () {
-            let id = $(this).attr("id");
+            var id = $(this).attr("id");
             if ($(this).hasClass("point")) {
                 str = "#" + $(item).attr("id");
                 add = 0;
             } else if ($(this).hasClass("x2")) {
-                let pointed_lines = lines.filter(function (pointed_lines) {
+                var pointed_lines = lines.filter(function (pointed_lines) {
                     return pointed_lines.A === id || pointed_lines.B === id;
                 });
-                let pointed = [];
-                for (let j = 0; j < pointed_lines.length; j++) {
+                var pointed = [];
+                for (var j = 0; j < pointed_lines.length; j++) {
                     pointed[j] = "#" + pointed_lines[j].id;
                 }
                 str = pointed.join();
                 add = 9;
             } else {
                 if (lines.length > 0) {
-                    let pointed_lines = lines.filter(function (pointed_lines) {
+                    var pointed_lines = lines.filter(function (pointed_lines) {
                         return pointed_lines.A === id || pointed_lines.B === id;
                     });
-                    let pointedA = [], pointedB = [];
-                    for (let j = 0; j < pointed_lines.length; j++) {
+                    var pointedA = [], pointedB = [];
+                    for (var j = 0; j < pointed_lines.length; j++) {
 
                         if (pointed_lines[j].A === id) {
                             pointedA.push("#" + pointed_lines[j].id);
@@ -233,8 +229,8 @@ function make_draggable(item, id) {
             }
         },
         stop: function (event, ui) {
-            let id = $(this).attr("id");
-            let x = extNum(id);
+            var id = $(this).attr("id");
+            var x = extNum(id);
             if ($(this).hasClass("marker")) {
                 points[x].x = $(this).position().left;
                 points[x].y = $(this).position().top;
@@ -256,23 +252,23 @@ function make_draggable(item, id) {
                 temporary[x].x = $(this).position().left;
                 temporary[x].y = $(this).position().top;
             }
-            updateLocalStorage()
+            updatesessionStorage()
         }
     });
 }
 
 function make_droppable(item) {
     $(item).attr({"id": points[pointed_nr].id});
-    let acceptance = points[pointed_nr++].acceptance;
+    var acceptance = points[pointed_nr++].acceptance;
     item.droppable({
         accept: acceptance,
         tolerance: "pointer",
         drop: function (event, ui) {
-            let left = $(item).position().left;
-            let top = $(item).position().top;
-            let id = $(item).attr("id");
+            var left = $(item).position().left;
+            var top = $(item).position().top;
+            var id = $(item).attr("id");
             if (ui.helper.hasClass("x2")) {
-                let x = extNum($(ui.helper).attr("id"));
+                var x = extNum($(ui.helper).attr("id"));
                 lines[x].B = $(this).attr("id");
                 lines[x].x2 = left + 35;
                 lines[x].y2 = top + 35;
@@ -281,11 +277,11 @@ function make_droppable(item) {
                 if (item.hasClass("destination")) {
                     lines[line_nr] = new Lines(left, top, $(item).attr("id"), "tempB_" + line_nr, "destination", "route", false);
                     temporary[extNum(ui.draggable.attr("id"))].del = true;
-                    updateLocalStorage()
+                    updatesessionStorage()
                 } else {
                     lines[line_nr] = new Lines(left, top, id, "tempB_" + line_nr, "route", "any", false);
                     temporary[extNum(ui.draggable.attr("id"))].del = true;
-                    updateLocalStorage()
+                    updatesessionStorage()
                 }
                 $(".x2.hidden").clone().appendTo("#div_constructor").css({
                     "top": top + 90,
@@ -302,11 +298,11 @@ function make_droppable(item) {
 }
 
 function remove_line(item) {
-    let x = parseInt($(item).attr("id").substr(6, 7));
+    var x = parseInt($(item).attr("id").substr(6, 7));
     lines[x].del = true;
     item.remove();
     $("#tempB_" + x).remove();
-    updateLocalStorage();
+    updatesessionStorage();
 }
 
 function extNum(str) {
@@ -314,19 +310,19 @@ function extNum(str) {
 }
 
 function active_mark_on_top(item) {
-    let id = item.getAttribute("id");
+    var id = item.getAttribute("id");
     $(".dragged").css("z-index", 5);
     item.css({"z-index": 6});
 }
 
-function updateLocalStorage() {
-    localStorage.setItem("points", JSON.stringify(points));
-    localStorage.setItem("temp", JSON.stringify(temporary));
-    localStorage.setItem("lines", JSON.stringify(lines));
+function updatesessionStorage() {
+    sessionStorage.setItem("points", JSON.stringify(points));
+    sessionStorage.setItem("temp", JSON.stringify(temporary));
+    sessionStorage.setItem("lines", JSON.stringify(lines));
 }
 
 function show_marker_details(item) {
-    let html_block = ""
+    var html_block = ""
     $("#p_template").clone().appendTo("#markers_info").html(pointed_nr + " : " + points[pointed_nr].type + " -> <input type='text' id='" + points[pointed_nr].type + "_" + pointed_nr + "' value='marker&quot;s info'/>")
 }
 
@@ -339,15 +335,15 @@ function random_code() {
 }
 
 function ShowMarkerDetails(e) {
-    let target = $(e.target);
+    var target = $(e.target);
     if (target.is(".marker p")) {
-        let div = target.closest("div");
-        let x = extNum(div.attr("id"));
+        var div = target.closest("div");
+        var x = extNum(div.attr("id"));
         replaceMarkerDetails(x);
     } else if (target.is("#svg_constructor")) {
         $("#markers_info").addClass("hidden");
         $(".marker").removeClass("active");
-        updateLocalStorageActiveId("nan");
+        updatesessionStorageActiveId("nan");
 
     }
 }
@@ -363,9 +359,9 @@ function replaceMarkerDetails(x) {
     $("#marker_description").val(points[x].description);
     $("#save_it").attr({"onclick": "saveMarkerDetails(" + x + ")"});
     $("#remove_it").attr({"onclick": "removeMarker(" + x + ")"});
-    updateLocalStorageActiveId(x);
-    let con;
-    let id = points[x].id;
+    updatesessionStorageActiveId(x);
+    var con;
+    var id = points[x].id;
     for (j = 0; j < lines.length; j++) {
         if (lines[j].del === false) {
             if (lines[j].A === id) {
@@ -386,13 +382,13 @@ function saveMarkerDetails(x) {
     points[x].title = $("#marker_title").val();
     points[x].description = $("#marker_description").val();
     console.log("details saved for item pointed_" + x);
-    updateLocalStorage();
+    updatesessionStorage();
 }
 
 function removeMarker(x) {
-    let r = confirm("Are you sure want to delete this POINT ?");
+    var r = confirm("Are you sure want to delete this POINT ?");
     if (r === true) {
-        let id_str = [];
+        var id_str = [];
         for (j = 0; j < lines.length; j++) {
             if (lines[j].A === "pointed_" + x || lines[j].B === "pointed_" + x) {
                 lines[j].del = true;
@@ -404,22 +400,22 @@ function removeMarker(x) {
         points[x].del = true;
         console.log("removed point with id pointed_" + x);
     }
-    updateLocalStorage();
+    updatesessionStorage();
     $("#markers_info").addClass("hidden");
     $(".marker").removeClass("active");
     return false;
 }
 
-function updateLocalStorageActiveId(x) {
+function updatesessionStorageActiveId(x) {
     active_id = x;
-    localStorage.setItem("active_id", active_id);
+    window.sessionStorage.setItem("active_id", active_id);
 }
 
 function openSideGrid() {
     kendoGrid();
     $("#side_grid").css({"width": "50%"});
     if (!isNaN(active_id)) {
-        let grid = $("#grid").data("kendoGrid");
+        var grid = $("#grid").data("kendoGrid");
         grid.select("tr:eq(" + active_id + ")");
     }
 
@@ -433,34 +429,34 @@ function closeSideGrid() {
 }
 
 function onChange() {
-    let grid = $("#grid").data("kendoGrid")
-    let selectedItem = grid.dataItem(grid.select());
+    var grid = $("#grid").data("kendoGrid")
+    var selectedItem = grid.dataItem(grid.select());
     replaceMarkerDetails(selectedItem.nr);
     console.log(selectedItem);
 }
 
 function kendoGrid() {
-    if (localStorage.points !== undefined) {
-        let dataSource = new kendo.data.DataSource({
+    if (sessionStorage !== null && sessionStorage.points !== undefined) {
+        var dataSource = new kendo.data.DataSource({
             transport: {
                 create: function (options) {
                 },
                 read: function (options) {
-                    let localData = JSON.parse(localStorage.points);
+                    var localData = JSON.parse(sessionStorage.points);
                     options.success(localData);
                 },
                 update: function (options) {
-                    let localData = JSON.parse(localStorage.points);
+                    var localData = JSON.parse(sessionStorage.points);
 
-                    for (let j = 0; j < localData.length; j++) {
+                    for (var j = 0; j < localData.length; j++) {
                         if (localData[j].nr === options.data.nr) {
                             localData[j].code = options.data.code;
                             localData[j].title = options.data.title;
                             localData[j].description = options.data.description;
                         }
                     }
-                    localStorage.points = JSON.stringify(localData);
-                    points = JSON.parse(localStorage.points);
+                    sessionStorage.points = JSON.stringify(localData);
+                    points = JSON.parse(sessionStorage.points);
                     options.success(options.data);
                 },
                 destroy: function (options) {
@@ -482,7 +478,7 @@ function kendoGrid() {
             pageSize: 20
         });
 
-        let grid = $("#grid").kendoGrid({
+        var grid = $("#grid").kendoGrid({
             dataSource: dataSource,
             pageable: false,
             selectable: "row",
@@ -522,49 +518,25 @@ function uploadMapBackground() {
 }
 
 function readURL() {
-    let file = document.getElementById("bg_maps_upload").files[0];
-    let reader = new FileReader();
+    var file = document.getElementById("bg_maps_upload").files[0];
+    var reader = new FileReader();
     reader.onloadend = function () {
-        let image = new Image();
+        var image = new Image();
         image.src = reader.result;
         image.onload = function () {
-            let width = image.width;
-            let height = image.height;
+            var width = image.width;
+            var height = image.height;
             $("#div_constructor").css({
                 "background-image": "url(" + reader.result + ")",
                 "width": width,
                 "height": height
             });
-            localStorage.setItem("bg_img", reader.result);
-            localStorage.setItem("w_bg_img", width);
-            localStorage.setItem("h_bg_img", height);
+            sessionStorage.setItem("bg_img", reader.result);
+            sessionStorage.setItem("w_bg_img", width);
+            sessionStorage.setItem("h_bg_img", height);
         };
     };
     if (file) {
         reader.readAsDataURL(file);
-    }
-}
-
-function loadPointsData() {
-    let settings = {
-        "async": true,
-        "crossDomain": true,
-        "url": "http://vanillanav.rosoftlab.net/api/v2/venue/5949",
-        "method": "GET",
-        "headers": {
-            "cache-control": "no-cache",
-            "postman-token": "cd123e6f-89b0-b653-1f00-28f2734c7880"
-        }
-    };
-
-    $.ajax(settings).done(function (response) {
-        filter_markers(response);
-    });
-}
-
-function filter_markers(obj) {
-    points_data_list = obj.Sections[0].Markers;
-    for(let j = 0; j<points_data_list.length; j++){
-
     }
 }

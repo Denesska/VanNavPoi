@@ -1,3 +1,37 @@
+#side_grid{
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+#side_grid .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+#open_side_grid{
+    font-size: 24px;
+    cursor: pointer;
+    float: left;
+    margin-top: 16px;
+    margin-right: 16px;
+}
+#upload_map_button{
+    height: 27px;
+    width: 30px;
+    cursor: pointer;
+    float: left;
+    margin-top: 16px;
+    margin-right: 16px;
+    background: url("../img/upload_icon.png") 0px 3px/27px 26px;
+}
 .side_bar{
     background-color: aliceblue;
     height: 900px;
@@ -5,14 +39,17 @@
 .main_side{
     background-color: azure;
     height: 900px;
+    overflow: scroll;
 }
 .constructor{
     background-color: #bce8f1;
-    height: 88%;
+    background-size: 100%;
+    height: 100%;
     width: 100%;
     position: relative;
+    transition: 0.5s;
 }
-svg.constructor{
+svg#svg_constructor{
     height: 100%;
     width: 100%;
 }
@@ -59,7 +96,7 @@ svg.constructor{
     height: 1.2em;
     border-radius: 0.6em;
     background-color: #222;
-    z-index: 6;
+    /*z-index: 6;*/
     cursor: pointer;
 }
 .line > .pointA{
@@ -81,4 +118,7 @@ svg.constructor{
 }
 #marker_name {
     text-transform:capitalize;
+}
+#grid{
+    margin: 45px 5px;
 }

@@ -3,19 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Create route</title>
+    <link href="styles/kendo.custom.css" rel="stylesheet">
+    <link href="styles/kendo.common.css" rel="stylesheet">
+    <link href="styles/kendo.material.min.css" rel="stylesheet">
     <link href="styles/bootstrap.min.css" rel="stylesheet">
     <link href="styles/jquery-ui.min.css" rel="stylesheet">
     <link href="styles/div-drag.css" rel="stylesheet">
-    <script src="scripts/jquery-3.2.1.min.js"></script>
-    <!--<script src="scripts/interact.js"></script>-->
+    <!--<script src="scripts/jquery-3.2.1.min.js"></script>-->
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="scripts/kendo.all.min.js"></script>
     <script src="scripts/bootstrap.min.js"></script>
     <script src="scripts/jquery-ui.min.js"></script>
-    <script src="scripts/div_drag.js"></script>
+    <script src="scripts/testES5.js"></script>
 </head>
 <body>
 <main>
     <div class="content col">
-        <div class="side_bar col-lg-3 col-sm-5"><p class="h3">Choose marker</p>
+        <div id="side_grid"><a href="javascript:void(0)" class="closebtn" onclick="closeSideGrid()">&times;</a>
+            <div id="grid"></div>
+        </div>
+        <div class="side_bar col-lg-3 col-sm-5">
+            <span id="open_side_grid" onclick="openSideGrid()">&#9776;</span>
+            <!--<span id="upload_map_button" ></span>-->
+            <p class="h3">Choose marker</p>
             <div class="markers ">
                 <div id="destination_marker" class="draggable element marker"><p></p></div>
                 <div id="route_marker" class="draggable element marker"><p></p></div>
@@ -27,25 +37,33 @@
                     <div class="pointB"></div>
                 </div>
             </div>
+            <label class="control-label">Upload map:</label>
+            <input id="bg_maps_upload" type="file" name="bg_map" class="form-control" onclick="uploadMapBackground()"/>
             <hr>
             <div id="markers_info" class="hidden">
                 <h3 id="marker_name" class="h3">Marker type</h3>
                 <form id="submit_marker_details" class="">
-                    <label for="marker_number">Number:</label> <input id="marker_number" class="form-control control-label" type="number" value="010101">
-                    <label for="marker_title">Title:</label> <input id="marker_title" class="form-control" type="text" placeholder="Mark title">
-                    <label for="marker_description">Descriptions:</label> <textarea id="marker_description" class="form-control" placeholder="Put down description about this mark"></textarea>
+                    <label for="marker_number">Number:</label>
+                    <input id="marker_number" class="form-control control-label" type="number" value="010101">
+                    <label for="marker_title">Title:</label>
+                    <input id="marker_title" class="form-control" type="text" placeholder="Mark title">
+                    <label for="marker_description">Descriptions:</label>
+                    <textarea id="marker_description" class="form-control"
+                              placeholder="Put down description about this mark"></textarea>
                     <div class="btn-group btn-group-justified top-margin" role="group">
                         <div class="btn-group" role="group">
-                            <button id="save_it" class="btn btn-success " type="submit">Save it!</button>
+                            <button id="save_it" class="btn btn-success " type="button">Save it!</button>
                         </div>
                         <div class="btn-group" role="group">
-                            <button id="remove_it" class="btn btn-danger" type="button" name="delete">Remove it!</button></div>
+                            <button id="remove_it" class="btn btn-danger" type="button" name="delete">Remove it!
+                            </button>
                         </div>
+                    </div>
                     <hr>
                     <label for="marker_connections">Connections with:</label>
                     <ul id="marker_connections" class="list-group">
-                    <li id="marker_connection" class="list-group-item hidden"></li>
-                </ul>
+                        <li id="marker_connection" class="list-group-item hidden"></li>
+                    </ul>
                 </form>
             </div>
         </div>
@@ -53,7 +71,7 @@
             <p class="h3">Construct your route marker</p>
             <div id="div_constructor" class="constructor">
                 <div class="x2 hidden"></div>
-                <svg id="svg_constructor" class="constructor">
+                <svg id="svg_constructor" class="">
                     <line id="replace_line" class="route_line" stroke-width="5" x1="0" x2="100" y1="0"
                           y2="100"></line>
                 </svg>
